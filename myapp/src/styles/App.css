@@ -1,14 +1,14 @@
-.App-bar {
-  padding: 15px;
-  margin-bottom: 20px;
-  font-size: 30px;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-}
-
 .App {
   justify-content: center;
   display: flex;
   width: 100%;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.App-bar {
+  font-size: 30px;
+  padding: 15px;
+  margin-bottom: 20px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 

@@ -1,37 +1,24 @@
+import './styles/App.css';
 import { useState } from 'react';
-import './App.css';
-
 import dayjs from 'dayjs'
-import { Select, MenuItem, InputLabel, FormControl, Box, TextField, Button, createTheme, ThemeProvider, AppBar, FormLabel } from '@mui/material'
+
+import { Select, 
+         MenuItem, 
+         InputLabel, 
+         FormControl, 
+         TextField, 
+         Button,          
+         ThemeProvider, 
+         AppBar } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-const getCurrentDateString = () => {
-  var date = new Date();
-  var day = String(date.getDate()).padStart(2, '0');
-  var month = String(date.getMonth() + 1).padStart(2, '0');
-  var year = date.getFullYear();
-
-  return year + '-' + month + '-' + day;
-}
-
-const getCurrentDate = () => {
-  var date = new Date();
-  var day = date.getDate()
-  var month = date.getMonth()
-  var year = date.getFullYear()
-
-  return new Date(year, month, day);
-}
-
-const getDateFromDayjsObject = (obj) => {
-  var day = obj.get('D');
-  var month = obj.get('M');
-  var year = obj.get('y');
-
-  return new Date(year, month, day);
-}
+import { getCurrentDate, getCurrentDateString, getDateFromDayjsObject } from './utils/utils';
+import { form_component_margin, font_sizes,
+         page_theme_normal, page_theme_large,
+         date_picker_theme_normal, date_picker_theme_large,
+         continents, errors} from './utils/variables';  
 
 function App() {
   const [continent_idx, setContinentIdx] = useState(0);
@@ -42,73 +29,30 @@ function App() {
   const [button_disabled, setButtonDisabled] = useState(false);
   const [use_large_font, setUseLargeFont] = useState(false);
 
-  const form_item_margin = 20;
-
-  const font_sizes = {
-    page_font_size_normal: 14,
-    page_font_size_large: 28,
-    form_title_font_size_normal: 20,
-    form_title_font_size_large: 40,
-    app_bar_font_size_normal: 30,
-    app_bar_font_size_large: 60,
-    date_picker_font_size_normal: 14,
-    date_picker_font_size_large: 22,
-    error_message_font_size_normal: 12,
-    error_message_font_size_large: 24
-  }
-
-  const page_theme_normal = createTheme({
-    typography: {
-      fontSize: font_sizes.page_font_size_normal
-    }
-  });
-
-  const page_theme_large = createTheme({
-    typography: {
-      fontSize: font_sizes.page_font_size_large
-    }
-  });
-
-  const date_picker_theme_normal = createTheme({
-    typography: {
-      fontSize: font_sizes.date_picker_font_size_normal
-    }
-  });
-
-  const date_picker_theme_large = createTheme({
-    typography: {
-      fontSize: font_sizes.date_picker_font_size_large
-    }
-  });
-
-  const continents = ['Afryka', 'Ameryka Południowa', 'Ameryka Północna', 'Antarktyda', 'Australia', 'Azja', 'Europa'];
-
-  const errors = {
-    unsatisfied_criteria: 'Nie spełnione kryteria',
-    missing_required_field: 'To pole jest wymagane'
-  }
-
   const validateForm = () => {
     var error_messages_list = [];
 
+    // Validate continent field
     if (continents[continent_idx] === 'Europa' && firstname.length < 2) {
       error_messages_list.push({ name: 'unsatisfied_criteria', message: errors.unsatisfied_criteria });
     }
 
+    // Validate firstname field
     if (firstname.length === 0) {
       error_messages_list.push({ name: 'missing_required_field', message: errors.missing_required_field });
     }
   
+    setErrorMessages(error_messages_list);
+
     if (error_messages_list.length === 0) {
       alert('Sukces');
     }
-
-    setErrorMessages(error_messages_list);
   }
 
   const renderErrorMessage = (error_name) => {
     const error_message = error_messages.find(em => em.name === error_name);
 
+    // If error message of given name was found in a list, put it on the screen
     if (error_message) {
       return <label className='error-message' style={use_large_font ? {fontSize: String(font_sizes.error_message_font_size_large) + 'px'} : {fontSize: String(font_sizes.error_message_font_size_normal) + 'px'}}>
         {error_message.message}
@@ -122,8 +66,10 @@ function App() {
     var birth_date = getDateFromDayjsObject(new_date);
     var current_date = getCurrentDate();
 
+    // Disable submit button if selected date is > than today date
     birth_date > current_date ? setButtonDisabled(true) : setButtonDisabled(false);
 
+    // Increase font size if user's age is > 60 years
     birth_date.setFullYear(birth_date.getFullYear() + 60);
     birth_date <= current_date ? setUseLargeFont(true) : setUseLargeFont(false);
   }
@@ -133,7 +79,8 @@ function App() {
       <AppBar position='static' className='App-bar' style={use_large_font ? {fontSize: String(font_sizes.app_bar_font_size_large) + 'px'} : {fontSize: String(font_sizes.app_bar_font_size_normal) + 'px'}}>
         Software Mind Interview Task
       </AppBar>
-      <div className='App' style={use_large_font ? {fontSize: String(font_sizes.page_font_size_large) + 'px'} : {fontSize: String(font_sizes.page_font_size_large) + 'px'}}>
+      
+      <div className='App'>
         <form className='form' style={use_large_font ? {fontSize: String(font_sizes.form_title_font_size_large) + 'px'} : {fontSize: String(font_sizes.form_title_font_size_normal) + 'px'}}>
             <label className='form-title'>Formularz</label>
             <FormControl>  
@@ -151,10 +98,8 @@ function App() {
               </Select>
               {renderErrorMessage('unsatisfied_criteria')}
             
-
-              
               <TextField 
-                style={{marginTop: String(form_item_margin) + 'px' }}
+                style={{marginTop: String(form_component_margin) + 'px'}}
                 id='outlined-basic' 
                 label='Imię'
                 variant='outlined'
@@ -164,35 +109,36 @@ function App() {
 
               
               <TextField
-                style={{marginTop: String(form_item_margin) + 'px' }}
+                style={{marginTop: String(form_component_margin) + 'px'}}
                 id='outlined-basic' 
                 label='Nazwisko' 
                 variant='outlined' 
                 onChange={(e) => setLastname(e.target.value)}
               />
 
-              
-              
               <ThemeProvider theme={use_large_font ? date_picker_theme_large : date_picker_theme_normal}>
                 <LocalizationProvider dateAdapter={AdapterDayjs} >  
                   <DatePicker label='Data urodzenia' value={date} onChange={handleDateChange}
-                  sx={{ mt: String(form_item_margin) + 'px'}} 
+                  sx={{ mt: String(form_component_margin) + 'px'}} 
                   format="DD/MM/YYYY"/>
                 </LocalizationProvider>
               </ThemeProvider> 
               
-              
-              
-              
               { button_disabled ? 
-                <Button className='form-component' variant='contained' style={{marginTop: String(form_item_margin) + 'px' }} disabled>Wyślij</Button> :
-                <Button className='form-component' variant='contained' onClick={validateForm} style={{marginTop: String(form_item_margin) + 'px' }}>Wyślij</Button>
+                <Button className='form-component' variant='contained' 
+                style={{marginTop: String(form_component_margin) + 'px' }} disabled>
+                  Wyślij
+                </Button> :
+                
+                <Button className='form-component' variant='contained'
+                onClick={validateForm} style={{marginTop: String(form_component_margin) + 'px' }}>
+                  Wyślij
+                </Button>
               }
             </FormControl>
         </form>
       </div>
     </ThemeProvider>
-    
   );
 }
 
